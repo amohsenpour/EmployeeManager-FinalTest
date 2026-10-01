@@ -43,9 +43,16 @@ namespace EmployeeManager.API
                 EmployeeDepartmentAssignmentRepository>();
 
             //Add dbContext
+            // add database context
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("EmployeeDB"));
+                options.UseSqlServer(
+                    builder.Configuration.GetConnectionString("EmployeeDB"),
+                    sqlOptions =>
+                    {
+                        // retry if azure sql has temporary connection problem
+                        sqlOptions.EnableRetryOnFailure();
+                    });
             });
 
             var app = builder.Build();
